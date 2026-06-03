@@ -21,7 +21,8 @@ public class CorsConfig {
         config.setAllowCredentials(true);
 
         config.setAllowedOrigins(List.of(
-                "http://localhost:5173"
+                "http://localhost:5173",
+                "https://verdant-kleicha-907621.netlify.app"
         ));
 
         config.setAllowedMethods(List.of("*"));

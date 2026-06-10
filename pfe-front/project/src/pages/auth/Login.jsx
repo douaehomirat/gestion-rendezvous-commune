@@ -17,8 +17,8 @@ import {
 } from "lucide-react";
 import Swal from "sweetalert2";
 
-const API_LOGIN = "https://gestion-rendezvous-commune-production.up.railway.app/api/auth/login";
-const API_FORGOT_PASSWORD = "https://gestion-rendezvous-commune-production.up.railway.app/api/auth/forgot-password";
+const API_LOGIN = "https://gestion-rendezvous-commune-production-b126.up.railway.app/api/auth/login";
+const API_FORGOT_PASSWORD = "https://gestion-rendezvous-commune-production-b126.up.railway.app/api/auth/forgot-password";
 
 const Login = () => {
   const navigate = useNavigate();

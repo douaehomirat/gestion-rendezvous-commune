@@ -17,8 +17,8 @@ import Modal from '../../components/Modal';
 import Badge from '../../components/Badge';
 import StatCard from '../../components/StatCard';
 
-const API = "https://gestion-rendezvous-commune-production.up.railway.app/api/users/agents";
-const DEP_API = "https://gestion-rendezvous-commune-production.up.railway.app/api/departments";
+const API = "https://gestion-rendezvous-commune-production-b126.up.railway.app/api/users/agents";
+const DEP_API = "https://gestion-rendezvous-commune-production-b126.up.railway.app/api/departments";
 
 const Agents = () => {
 
@@ -109,7 +109,7 @@ const Agents = () => {
   // =========================
   const deleteAgent = async (id) => {
     try {
-      await axios.delete(`http://localhost:8080/api/users/${id}`);
+      await axios.delete(`https://gestion-rendezvous-commune-production-b126.up.railway.app/api/users/${id}`);
       fetchAgents();
     } catch (err) {
       console.error(err);

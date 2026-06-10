@@ -27,7 +27,7 @@ import {
   getStatusLabel,
 } from "../../utils/helpers";
 
-const API = "https://gestion-rendezvous-commune-production.up.railway.app/api/appointments";
+const API = "https://gestion-rendezvous-commune-production-b126.up.railway.app/api/appointments";
 
 const AppointmentDetails = () => {
   const { id } = useParams();

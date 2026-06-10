@@ -19,8 +19,8 @@ import {
 
 import { generateHistoryPDF } from '../../utils/pdfGenerator';
 
-const API_APPOINTMENTS = "https://gestion-rendezvous-commune-production.up.railway.app/api/appointments";
-const API_DEPARTMENTS = "https://gestion-rendezvous-commune-production.up.railway.app/api/departments";
+const API_APPOINTMENTS = "https://gestion-rendezvous-commune-production-b126.up.railway.app/api/appointments";
+const API_DEPARTMENTS = "https://gestion-rendezvous-commune-production-b126.up.railway.app/api/departments";
 
 const RequestsHistory = () => {
 

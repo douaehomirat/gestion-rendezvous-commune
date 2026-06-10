@@ -45,9 +45,9 @@ const Reports = () => {
     const fetchData = async () => {
       try {
         const [services, status, months] = await Promise.all([
-          axios.get("https://gestion-rendezvous-commune-production.up.railway.app/api/reports/services"),
-          axios.get("https://gestion-rendezvous-commune-production.up.railway.app/api/reports/status"),
-          axios.get("https://gestion-rendezvous-commune-production.up.railway.app/api/reports/months"),
+          axios.get("https://gestion-rendezvous-commune-production-b126.up.railway.app/api/reports/services"),
+          axios.get("https://gestion-rendezvous-commune-production-b126.up.railway.app/api/reports/status"),
+          axios.get("https://gestion-rendezvous-commune-production-b126.up.railway.app/api/reports/months"),
         ]);
 
         // SERVICES

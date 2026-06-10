@@ -7,7 +7,7 @@ import {
 import Swal from "sweetalert2";
 import { generateTicketNumber } from "../../utils/helpers";
 
-const API = "https://gestion-rendezvous-commune-production.up.railway.app/api";
+const API = "https://gestion-rendezvous-commune-production-b126.up.railway.app/api";
 
 // ===================== UTILS =====================
 

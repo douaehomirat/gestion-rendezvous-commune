@@ -8,7 +8,7 @@ import StatCard from "../../components/StatCard";
 import Badge from "../../components/Badge";
 import { formatDate } from "../../utils/helpers";
 
-const API = "https://gestion-rendezvous-commune-production.up.railway.app/api/appointments";
+const API = "https://gestion-rendezvous-commune-production-b126.up.railway.app/api/appointments";
 
 // ─── Pure helpers (outside component to avoid re-creation on each render) ────
 

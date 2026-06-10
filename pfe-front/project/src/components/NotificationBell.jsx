@@ -4,7 +4,7 @@ import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import { connectNotificationSocket, disconnectNotificationSocket } from "../services/notificationSocket";
 
-const API = "https://gestion-rendezvous-commune-production.up.railway.app/api/notifications";
+const API = "https://gestion-rendezvous-commune-production-b126.up.railway.app/api/notifications";
 
 /**
  * 🔥 Normalise isRead (IMPORTANT FIX)

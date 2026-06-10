@@ -45,7 +45,7 @@ const Profile = () => {
   // ================= LOAD USER =================
   const loadUser = async () => {
     try {
-      const res = await fetch(`https://gestion-rendezvous-commune-production.up.railway.app/api/users/${userLocal.id}`);
+      const res = await fetch(`https://gestion-rendezvous-commune-production-b126.up.railway.app/api/users/${userLocal.id}`);
       const data = await res.json();
 
       setInfo({
@@ -64,7 +64,7 @@ const Profile = () => {
   // ================= LOAD CONGES =================
   const loadConges = async () => {
     try {
-      const res = await fetch(`https://gestion-rendezvous-commune-production.up.railway.app/api/conges/agent/${userLocal.id}`);
+      const res = await fetch(`https://gestion-rendezvous-commune-production-b126.up.railway.app/api/conges/agent/${userLocal.id}`);
       const data = await res.json();
       setConges(Array.isArray(data) ? data : []);
     } catch (err) {
@@ -82,7 +82,7 @@ const Profile = () => {
   // ================= UPDATE USER =================
   const handleUpdateUser = async () => {
     try {
-      const res = await fetch(`https://gestion-rendezvous-commune-production.up.railway.app/api/users/${userLocal.id}`, {
+      const res = await fetch(`https://gestion-rendezvous-commune-production-b126.up.railway.app/api/users/${userLocal.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(info)
@@ -105,7 +105,7 @@ const Profile = () => {
     }
 
     try {
-      const res = await fetch(`https://gestion-rendezvous-commune-production.up.railway.app/api/users/${userLocal.id}/password`, {
+      const res = await fetch(`https://gestion-rendezvous-commune-production-b126.up.railway.app/api/users/${userLocal.id}/password`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -143,7 +143,7 @@ if (res.ok) {
       return;
     }
 
-    const res = await fetch("https://gestion-rendezvous-commune-production.up.railway.app/api/conges", {
+    const res = await fetch("https://gestion-rendezvous-commune-production-b126.up.railway.app/api/conges", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...conge, agentId: userLocal.id })
@@ -158,7 +158,7 @@ if (res.ok) {
 
   // ================= DELETE CONGE =================
   const handleDelete = async (id) => {
-    const res = await fetch(`https://gestion-rendezvous-commune-production.up.railway.app/api/conges/${id}`, {
+    const res = await fetch(`https://gestion-rendezvous-commune-production-b126.up.railway.app/api/conges/${id}`, {
       method: "DELETE"
     });
 

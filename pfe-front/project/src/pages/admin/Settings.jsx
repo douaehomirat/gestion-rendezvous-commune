@@ -21,8 +21,8 @@ import {
 } from "lucide-react";
 
 // ================= API =================
-const SETTINGS_API = "https://gestion-rendezvous-commune-production.up.railway.app/api/settings";
-const USERS_API = "https://gestion-rendezvous-commune-production.up.railway.app/api/users";
+const SETTINGS_API = "https://gestion-rendezvous-commune-production-b126.up.railway.app/api/settings";
+const USERS_API = "https://gestion-rendezvous-commune-production-b126.up.railway.app/api/users";
 
 // ================= INPUT COMPONENT =================
 const Input = ({

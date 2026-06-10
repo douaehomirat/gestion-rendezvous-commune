@@ -15,11 +15,11 @@ import {
 import Modal from "../../components/Modal";
 import StatCard from "../../components/StatCard";
 
-const API = "https://gestion-rendezvous-commune-production.up.railway.app/api/departments";
-const AGENTS_API = "https://gestion-rendezvous-commune-production.up.railway.app/api/users/agents";
+const API = "https://gestion-rendezvous-commune-production-b126.up.railway.app/api/departments";
+const AGENTS_API = "https://gestion-rendezvous-commune-production-b126.up.railway.app/api/users/agents";
 
 // ✅ FIX IMPORTANT : pas /uploads ici
-const FILE_BASE_URL = "https://gestion-rendezvous-commune-production.up.railway.app/";
+const FILE_BASE_URL = "https://gestion-rendezvous-commune-production-b126.up.railway.app/";
 
 const Departments = () => {
   const [departments, setDepartments] = useState([]);

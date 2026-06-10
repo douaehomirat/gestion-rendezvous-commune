@@ -9,7 +9,7 @@ import {
 
 import Badge from '../../components/Badge';
 
-const API = "https://gestion-rendezvous-commune-production.up.railway.app/api/users";
+const API = "https://gestion-rendezvous-commune-production-b126.up.railway.app/api/users";
 
 const Profile = () => {
 

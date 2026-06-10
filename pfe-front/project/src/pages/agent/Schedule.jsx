@@ -11,7 +11,7 @@ import { Calendar, Clock, BarChart3 } from 'lucide-react';
 import Modal from '../../components/Modal';
 import StatCard from '../../components/StatCard';
 
-const API = "https://gestion-rendezvous-commune-production.up.railway.app/api/appointments";
+const API = "https://gestion-rendezvous-commune-production-b126.up.railway.app/api/appointments";
 
 // =========================
 // STATUS COLORS + LABELS

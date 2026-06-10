@@ -3,7 +3,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { RefreshCcw, AlertCircle } from "lucide-react";
 
-const API = "https://gestion-rendezvous-commune-production.up.railway.app/api";
+const API = "https://gestion-rendezvous-commune-production-b126.up.railway.app/api";
 
 /**
  * 🎯 Backend ENUM SOURCE OF TRUTH:

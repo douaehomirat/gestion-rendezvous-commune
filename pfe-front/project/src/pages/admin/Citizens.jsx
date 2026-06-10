@@ -15,7 +15,7 @@ import Table from '../../components/Table';
 import Modal from '../../components/Modal';
 import StatCard from '../../components/StatCard';
 
-const API = "https://gestion-rendezvous-commune-production.up.railway.app/api/users/citizens";
+const API = "https://gestion-rendezvous-commune-production-b126.up.railway.app/api/users/citizens";
 
 const Citizens = () => {
   const [citizens, setCitizens] = useState([]);

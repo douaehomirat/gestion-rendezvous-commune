@@ -23,7 +23,7 @@ import { getStatusColor, getStatusLabel } from "../../utils/helpers";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
-const API = "https://gestion-rendezvous-commune-production.up.railway.app/api/appointments";
+const API = "https://gestion-rendezvous-commune-production-b126.up.railway.app/api/appointments";
 
 // =========================
 // HELPER — formater la date

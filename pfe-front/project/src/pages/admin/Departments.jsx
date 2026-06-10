@@ -19,7 +19,7 @@ const API = "https://gestion-rendezvous-commune-production.up.railway.app/api/de
 const AGENTS_API = "https://gestion-rendezvous-commune-production.up.railway.app/api/users/agents";
 
 // ✅ FIX IMPORTANT : pas /uploads ici
-const FILE_BASE_URL = "http://localhost:8080/";
+const FILE_BASE_URL = "https://gestion-rendezvous-commune-production.up.railway.app/";
 
 const Departments = () => {
   const [departments, setDepartments] = useState([]);

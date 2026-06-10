@@ -27,13 +27,12 @@ function ChatPopup() {
 
   return (
     <div className="chat-page">
-      <h1 className="chat-title">Inventory Chatbot</h1>
+    
 
       {/* Logo flottant */}
       <div className="floating-logo">
        
           <motion.img
-            src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png"
             alt="Logo"
             className="logo-img"
             initial={{ opacity: 0, scale: 0.8 }}

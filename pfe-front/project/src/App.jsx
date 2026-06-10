@@ -34,8 +34,18 @@ import CreateReclamation from './pages/citizen/CreateReclamation';
 import Accueil from './pages/Accueil';
 import ResetPassword from './pages/ResetPassword';
 import { useEffect } from 'react';
+import ChatPopup from './components/ChatPopup';
 
 function App() {
+  const [showChat, setShowChat] = useState(false);
+  
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowChat(true);
+    }, 5000); // Affiche le chat après 5 secondes
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <BrowserRouter>
       <AuthProvider>
@@ -80,7 +90,7 @@ function App() {
           </Route>
 
         </Routes>
-        
+        {showChat && <ChatPopup />}
       </AuthProvider>
     </BrowserRouter>
   );

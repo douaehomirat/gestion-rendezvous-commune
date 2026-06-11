@@ -22,8 +22,8 @@ public class CorsConfig {
 
         config.setAllowedOrigins(List.of(
                 "http://localhost:5173",
-                "https://verdant-kleicha-907621.netlify.app"
-                 "https://incredible-tapioca-00c427.netlify.app"
+                "https://verdant-kleicha-907621.netlify.app",
+                "https://incredible-tapioca-00c427.netlify.app"
         ));
 
         config.setAllowedMethods(List.of("*"));

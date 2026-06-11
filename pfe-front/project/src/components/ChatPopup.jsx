@@ -32,21 +32,7 @@ function ChatPopup() {
       {/* Logo flottant */}
       <div className="floating-logo">
        
-          <motion.img
-            alt="Logo"
-            className="logo-img"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.5, duration: 0.5 }}
-            whileHover={{ scale: 1.15, rotate: 6 }}
-            drag
-            dragConstraints={{
-              top: -50,
-              left: -50,
-              right: 50,
-              bottom: 50,
-            }}
-          />
+         
         
       </div>
     </div>

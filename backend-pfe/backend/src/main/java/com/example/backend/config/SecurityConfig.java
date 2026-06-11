@@ -41,7 +41,7 @@ public class SecurityConfig {
 
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(List.of("https://verdant-kleicha-907621.netlify.app", "http://localhost:5173"));
+        config.setAllowedOrigins(List.of("https://verdant-kleicha-907621.netlify.app", "https://incredible-tapioca-00c427.netlify.app", "http://localhost:5173"));
         config.setAllowedMethods(List.of("*"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);

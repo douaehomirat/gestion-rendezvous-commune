@@ -29,7 +29,11 @@ public class UserController {
 
 
 
-
+    @DeleteMapping("/citizens/{id}")
+public ResponseEntity<?> deleteCitizen(@PathVariable Long id) {
+    userRepository.deleteById(id);
+    return ResponseEntity.ok().build();
+}
 
     // =========================
     // ALL USERS

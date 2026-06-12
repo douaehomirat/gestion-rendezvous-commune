@@ -1,26 +1,29 @@
 package com.example.backend.controller;
 
-import com.example.backend.service.N8nService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import com.example.backend.dto.ChatRequest;
+import com.example.backend.dto.ChatResponse;
+import com.example.backend.service.GeminiService;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/chat")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "*")
 public class ChatController {
 
-    @Autowired
-    private N8nService n8nService;
+    private final GeminiService geminiService;
+
+    public ChatController(GeminiService geminiService) {
+        this.geminiService = geminiService;
+    }
 
     @PostMapping
-    public ResponseEntity<String> chat(@RequestParam String userId,
-                                       @RequestBody String message) {
-        return ResponseEntity.ok(n8nService.sendMessage(userId, message));
+    public ChatResponse chat(
+            @RequestBody ChatRequest request
+    ) {
+
+        String response =
+                geminiService.askGemini(request.getMessage());
+
+        return new ChatResponse(response);
     }
 }

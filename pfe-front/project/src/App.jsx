@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import AgentIA from './components/AgentIA';
 
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
@@ -91,6 +92,9 @@ function App() {
 
         </Routes>
         {showChat && <ChatPopup />}
+        <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+            <AgentIA />
+        </div>
       </AuthProvider>
     </BrowserRouter>
   );

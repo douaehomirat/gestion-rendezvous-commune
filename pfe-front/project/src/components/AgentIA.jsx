@@ -1,108 +1,140 @@
 import { useState } from "react";
 import axios from "axios";
+import { MessageCircle, X, Send } from "lucide-react";
 
 export default function AgentIA() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
-    const [message, setMessage] = useState("");
-    const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState([
+    {
+      sender: "bot",
+      text: "Bonjour 👋, je suis votre assistant administratif. Comment puis-je vous aider ?"
+    }
+  ]);
 
-    const sendMessage = async () => {
+  const sendMessage = async () => {
+    if (!message.trim()) return;
 
-        if (!message.trim()) return;
-
-        const userMessage = {
-            sender: "user",
-            text: message
-        };
-
-        setMessages(prev => [...prev, userMessage]);
-
-        try {
-
-            const response = await axios.post(
-                "https://gestion-rendezvous-commune-production-b126.up.railway.app/api/chat",
-                {
-                    message
-                }
-            );
-
-            setMessages(prev => [
-                ...prev,
-                {
-                    sender: "bot",
-                    text: response.data.response
-                }
-            ]);
-
-        } catch (error) {
-
-            setMessages(prev => [
-                ...prev,
-                {
-                    sender: "bot",
-                    text: "Erreur de connexion."
-                }
-            ]);
-        }
-
-        setMessage("");
+    const userMessage = {
+      sender: "user",
+      text: message
     };
 
-    return (
-        <div className="w-full max-w-2xl mx-auto bg-white rounded-xl shadow-lg">
+    setMessages((prev) => [...prev, userMessage]);
 
-            <div className="bg-blue-600 text-white p-4 rounded-t-xl">
-                Assistant Administratif
-            </div>
+    const currentMessage = message;
+    setMessage("");
+    setLoading(true);
 
-            <div className="h-96 overflow-y-auto p-4 space-y-3">
+    try {
+      const response = await axios.post(
+        "https://gestion-rendezvous-commune-production-b126.up.railway.app/api/chat",
+        {
+          message: currentMessage
+        }
+      );
 
-                {messages.map((msg, index) => (
+      setMessages((prev) => [
+        ...prev,
+        {
+          sender: "bot",
+          text: response.data.response
+        }
+      ]);
+    } catch (error) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          sender: "bot",
+          text: "Une erreur est survenue lors de la connexion."
+        }
+      ]);
+    }
 
-                    <div
-                        key={index}
-                        className={
-                            msg.sender === "user"
-                                ? "text-right"
-                                : "text-left"
-                        }
-                    >
+    setLoading(false);
+  };
 
-                        <span
-                            className={
-                                msg.sender === "user"
-                                    ? "bg-blue-600 text-white px-4 py-2 rounded-lg inline-block"
-                                    : "bg-gray-200 px-4 py-2 rounded-lg inline-block"
-                            }
-                        >
-                            {msg.text}
-                        </span>
+  return (
+    <>
+      {/* Bouton flottant */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="fixed bottom-6 right-6 z-50 bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition"
+      >
+        {isOpen ? <X size={24} /> : <MessageCircle size={24} />}
+      </button>
 
-                    </div>
+      {/* Fenêtre Chat */}
+      {isOpen && (
+        <div className="fixed bottom-24 right-6 w-[380px] h-[550px] bg-white rounded-2xl shadow-2xl flex flex-col z-50 overflow-hidden">
 
-                ))}
+          {/* Header */}
+          <div className="bg-blue-600 text-white p-4">
+            <h3 className="font-bold text-lg">
+              Assistant Administratif IA
+            </h3>
+            <p className="text-sm opacity-90">
+              Service d'aide aux rendez-vous
+            </p>
+          </div>
 
-            </div>
+          {/* Messages */}
+          <div className="flex-1 overflow-y-auto p-4 bg-gray-50 space-y-3">
 
-            <div className="p-4 flex gap-2">
-
-                <input
-                    type="text"
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Posez votre question..."
-                    className="flex-1 border rounded-lg px-4 py-2"
-                />
-
-                <button
-                    onClick={sendMessage}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-lg"
+            {messages.map((msg, index) => (
+              <div
+                key={index}
+                className={`flex ${
+                  msg.sender === "user"
+                    ? "justify-end"
+                    : "justify-start"
+                }`}
+              >
+                <div
+                  className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm ${
+                    msg.sender === "user"
+                      ? "bg-blue-600 text-white"
+                      : "bg-white border shadow-sm"
+                  }`}
                 >
-                    Envoyer
-                </button>
+                  {msg.text}
+                </div>
+              </div>
+            ))}
 
-            </div>
+            {loading && (
+              <div className="bg-white border shadow-sm rounded-2xl px-4 py-3 inline-block">
+                Réflexion...
+              </div>
+            )}
+          </div>
 
+          {/* Zone saisie */}
+          <div className="border-t p-3 flex gap-2 bg-white">
+
+            <input
+              type="text"
+              placeholder="Écrivez votre message..."
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              onKeyDown={(e) =>
+                e.key === "Enter" && sendMessage()
+              }
+              className="flex-1 border rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+
+            <button
+              onClick={sendMessage}
+              className="bg-blue-600 text-white p-3 rounded-xl hover:bg-blue-700 transition"
+            >
+              <Send size={18} />
+            </button>
+
+          </div>
         </div>
-    );
+      )}
+    </>
+  );
 }

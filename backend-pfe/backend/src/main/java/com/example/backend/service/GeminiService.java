@@ -126,7 +126,7 @@ public class GeminiService {
                     + "\n=== QUESTION DU CITOYEN ===\n"
                     + userMessage;
 
-            String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + apiKey;
+            String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key="+ apiKey;
 
             JSONObject body = new JSONObject();
             JSONArray contents = new JSONArray();

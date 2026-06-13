@@ -12,7 +12,7 @@ public class RedirectController {
     @GetMapping("/reset-password/{token}")
     public ResponseEntity<Void> redirectToFrontend(@PathVariable String token) {
         // Redirige vers frontend + token
-        String frontendUrl = "http://localhost:3000/reset-password?token=" + token;
+        String frontendUrl = "https://incredible-tapioca-00c427.netlify.app/reset-password?token=" + token;
         return ResponseEntity.status(HttpStatus.FOUND)
                 .header("Location", frontendUrl)
                 .build();

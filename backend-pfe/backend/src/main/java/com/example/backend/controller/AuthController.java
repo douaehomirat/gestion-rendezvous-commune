@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:5173"})  // ✅ AJOUTÉ 3000
+@CrossOrigin(origins = {"http://localhost:3000","https://gestion-rendezvous-commune-production-b126.up.railway.app", "http://localhost:5173"})  // ✅ AJOUTÉ 3000
 @RequiredArgsConstructor
 public class AuthController {
 

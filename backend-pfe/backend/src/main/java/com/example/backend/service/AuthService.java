@@ -86,7 +86,7 @@ public class AuthService {
 
         Map<String, Object> payload = Map.of(
             "from", "onboarding@resend.dev",
-            "to", new String[]{"douae.homirat@uit.ac.ma"},
+            "to", new String[]{"douaehomirat@gmail.com"},
             "subject", "🔒 Réinitialisation de votre mot de passe",
             "text", body
         );

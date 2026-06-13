@@ -64,7 +64,7 @@ public class AuthService {
     }
 
     private void sendResetPasswordEmail(User user, String token) {
-        String resetUrl = "http://localhost:5173/reset-password/" + token;  // Backend
+        String resetUrl = "https://incredible-tapioca-00c427.netlify.app/reset-password/" + token;  // Backend
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(user.getEmail());
         message.setSubject("🔒 Réinitialisation de votre mot de passe");

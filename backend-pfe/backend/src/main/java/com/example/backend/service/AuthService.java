@@ -8,10 +8,16 @@ import com.example.backend.repository.PasswordResetTokenRepository;
 import com.example.backend.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.http.*;
+import java.util.Map;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -63,28 +69,42 @@ public class AuthService {
         tokenRepository.delete(resetToken);
     }
 
-    private void sendResetPasswordEmail(User user, String token) {
-   String resetUrl = "https://incredible-tapioca-00c427.netlify.app/reset-password/" + token;
-    SimpleMailMessage message = new SimpleMailMessage();
-    message.setFrom("onboarding@resend.dev"); // ← AJOUTER cette ligne
-    message.setTo(user.getEmail());
-    message.setSubject("🔒 Réinitialisation de votre mot de passe");
-        message.setText("""
-            Bonjour %s,
-            
-            Vous avez demandé une réinitialisation de mot de passe.
-            Cliquez sur le lien ci-dessous pour définir un nouveau mot de passe :
-            
-            %s
-            
-            ⚠️ Ce lien expire dans 24 heures.
-            
-            Si vous n'êtes pas à l'origine de cette demande, ignorez cet email.
-            
-            Cordialement,
-            CityAppointment Team
-            """.formatted(user.getName(), resetUrl));
+    @Value("${resend.api.key}")
+private String resendApiKey;
 
-        mailSender.send(message);
-    }
+private void sendResetPasswordEmail(User user, String token) {
+    String resetUrl = "https://incredible-tapioca-00c427.netlify.app/reset-password/" + token;
+
+    String body = """
+        Bonjour %s,
+        
+        Vous avez demandé une réinitialisation de mot de passe.
+        Cliquez sur le lien ci-dessous :
+        
+        %s
+        
+        ⚠️ Ce lien expire dans 24 heures.
+        
+        Si vous n'êtes pas à l'origine de cette demande, ignorez cet email.
+        
+        Cordialement,
+        CityAppointment Team
+        """.formatted(user.getName(), resetUrl);
+
+    RestTemplate restTemplate = new RestTemplate();
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    headers.setBearerAuth(resendApiKey);
+
+    Map<String, Object> payload = Map.of(
+        "from", "onboarding@resend.dev",
+        "to", new String[]{user.getEmail()},
+        "subject", "🔒 Réinitialisation de votre mot de passe",
+        "text", body
+    );
+
+    HttpEntity<Map<String, Object>> request = new HttpEntity<>(payload, headers);
+    restTemplate.postForObject("https://api.resend.com/emails", request, String.class);
+}
 }

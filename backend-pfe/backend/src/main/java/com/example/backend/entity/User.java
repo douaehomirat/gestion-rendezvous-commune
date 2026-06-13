@@ -48,15 +48,13 @@ public class User {
     private Department departement;
 
     // Rendez-vous (pour citoyen)
-    @OneToMany(mappedBy = "citizen", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<Appointment> appointments;
+  @OneToMany(mappedBy = "citizen", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+@JsonIgnore
+private List<Appointment> appointments;
 
-
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<Notification> notifications;
+@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+@JsonIgnore
+private List<Notification> notifications;
 
 
 }

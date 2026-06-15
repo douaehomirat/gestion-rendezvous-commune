@@ -22,7 +22,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
 
         registry.addEndpoint("/ws")
-                .setAllowedOriginPatterns("*") // ⚠️ en prod limiter
+                .setAllowedOriginPatterns("https://incredible-tapioca-00c427.netlify.app") // ⚠️ en prod limiter
                 .withSockJS();
     }
 }

@@ -31,7 +31,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/appointments")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "https://incredible-tapioca-00c427.netlify.app")
 @RequiredArgsConstructor
 public class AppointmentController {
 
@@ -351,4 +351,35 @@ public class AppointmentController {
                 citizenId
         );
     }
+@GetMapping("/upcoming-reminders")
+public List<Map<String, Object>> getUpcomingReminders() {
+
+    LocalDateTime limitDate = LocalDateTime.now().plusHours(24);
+
+    return appointmentRepository.findAppointmentsForReminder(limitDate)
+            .stream()
+            .map(a -> Map.<String, Object>of(
+                    "id", a.getId(),
+                    "citizenName", a.getCitizen() != null ? a.getCitizen().getName() : "",
+                    "citizenEmail", a.getCitizen() != null ? a.getCitizen().getEmail() : "",
+                    "serviceName", a.getDepartment() != null ? a.getDepartment().getName() : "",
+                    "appointmentDate", a.getDate(),
+                    "appointmentTime", a.getTime()
+            ))
+            .toList();
+}
+@PutMapping("/{id}/mark-reminded")
+public ResponseEntity<?> markReminded(
+        @PathVariable Long id
+) {
+    Appointment appt =
+            appointmentRepository.findById(id)
+                    .orElseThrow();
+
+    appt.setReminderSent(true);
+
+    appointmentRepository.save(appt);
+
+    return ResponseEntity.ok().build();
+}
 }

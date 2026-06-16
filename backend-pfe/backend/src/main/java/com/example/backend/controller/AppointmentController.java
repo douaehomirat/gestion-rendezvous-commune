@@ -352,6 +352,32 @@ public class AppointmentController {
                 citizenId
         );
     }
+@GetMapping("/debug-appointments")
+public List<Map<String, Object>> debugAppointments() {
+    List<Appointment> all = appointmentRepository.findAll();
+    
+    ZoneId zone = ZoneId.of("Africa/Casablanca");
+    LocalDateTime now = LocalDateTime.now(zone);
+    LocalDateTime limit = now.plusHours(24);
+    
+    return all.stream().map(a -> {
+        LocalDateTime apptDateTime = null;
+        if (a.getDate() != null && a.getTime() != null) {
+            apptDateTime = LocalDateTime.of(a.getDate(), a.getTime());
+        }
+        return Map.<String, Object>of(
+            "id",           a.getId(),
+            "date",         String.valueOf(a.getDate()),
+            "time",         String.valueOf(a.getTime()),
+            "status",       String.valueOf(a.getStatus()),
+            "reminderSent", a.isReminderSent(),
+            "dateTime",     String.valueOf(apptDateTime),
+            "inRange",      apptDateTime != null && 
+                            !apptDateTime.isBefore(now) && 
+                            !apptDateTime.isAfter(limit)
+        );
+    }).toList();
+}
 @GetMapping("/upcoming-reminders")
 public List<Map<String, Object>> getUpcomingReminders() {
 

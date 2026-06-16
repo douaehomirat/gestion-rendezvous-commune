@@ -26,6 +26,7 @@ import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 
@@ -354,16 +355,23 @@ public class AppointmentController {
 @GetMapping("/upcoming-reminders")
 public List<Map<String, Object>> getUpcomingReminders() {
 
-    LocalDateTime now = LocalDateTime.now();
+    ZoneId zone = ZoneId.of("Africa/Casablanca");
+
+    LocalDateTime now = LocalDateTime.now(zone);
     LocalDateTime limitDate = now.plusHours(24);
 
     System.out.println("===== REMINDER CHECK =====");
     System.out.println("NOW = " + now);
     System.out.println("LIMIT DATE = " + limitDate);
 
-    var appointments = appointmentRepository.findAppointmentsForReminder(limitDate);
+    List<Appointment> appointments =
+            appointmentRepository.findAppointmentsForReminder(now, limitDate);
 
     System.out.println("FOUND APPOINTMENTS = " + appointments.size());
+
+    appointments.forEach(a ->
+            System.out.println("APPOINTMENT = " + a.getDate() + " " + a.getTime())
+    );
 
     return appointments.stream()
             .map(a -> Map.<String, Object>of(

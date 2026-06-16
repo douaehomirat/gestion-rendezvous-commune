@@ -89,7 +89,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 @Query("""
 SELECT a FROM Appointment a
 WHERE a.reminderSent = false
-And AND a.status <> 'completed'
+And  a.status <> 'completed'
 AND FUNCTION('TIMESTAMP', a.date, a.time) BETWEEN :now AND :limitDate
 """)
 List<Appointment> findAppointmentsForReminder(

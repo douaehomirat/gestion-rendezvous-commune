@@ -23,7 +23,7 @@ public class ReminderScheduler {
     }
 
     // 🔥 every hour
-    @Scheduled(cron = "0 0 * * * *")
+   
     public void sendReminders() {
 
         System.out.println("⏰ CHECKING REMINDERS...");

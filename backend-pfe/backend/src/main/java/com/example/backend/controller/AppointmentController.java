@@ -307,7 +307,7 @@ public class AppointmentController {
 
         for (Appointment appt : appointments) {
 
-            if (appt.getReminderSent()) continue;
+            if (appt.isReminderSent()) continue;
             if ("completed".equals(appt.getStatus())) continue;
 
             LocalDateTime dateTime = appt.getStartDateTime();

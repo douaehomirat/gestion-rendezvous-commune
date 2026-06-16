@@ -30,7 +30,7 @@ public class Appointment {
     private String counter;
     private String status;
    @Column(name = "reminder_sent", nullable = false)
-private boolean reminderSent = false;
+    private boolean reminderSent = false;
 
     // 👤 CITIZEN
     @ManyToOne(fetch = FetchType.EAGER)

@@ -26,6 +26,7 @@ import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
@@ -355,26 +356,32 @@ public class AppointmentController {
 @GetMapping("/debug-appointments")
 public List<Map<String, Object>> debugAppointments() {
     List<Appointment> all = appointmentRepository.findAll();
-    
+
     ZoneId zone = ZoneId.of("Africa/Casablanca");
     LocalDateTime now = LocalDateTime.now(zone);
     LocalDateTime limit = now.plusHours(24);
-    
+
     return all.stream().map(a -> {
         LocalDateTime apptDateTime = null;
-        if (a.getDate() != null && a.getTime() != null) {
-            apptDateTime = LocalDateTime.of(a.getDate(), a.getTime());
+        try {
+            if (a.getDate() != null && a.getTime() != null) {
+                LocalTime localTime = LocalTime.parse(a.getTime()); // String → LocalTime
+                apptDateTime = LocalDateTime.of(a.getDate(), localTime);
+            }
+        } catch (Exception e) {
+            // format de time invalide
         }
+        LocalDateTime finalApptDateTime = apptDateTime;
         return Map.<String, Object>of(
             "id",           a.getId(),
             "date",         String.valueOf(a.getDate()),
             "time",         String.valueOf(a.getTime()),
             "status",       String.valueOf(a.getStatus()),
             "reminderSent", a.isReminderSent(),
-            "dateTime",     String.valueOf(apptDateTime),
-            "inRange",      apptDateTime != null && 
-                            !apptDateTime.isBefore(now) && 
-                            !apptDateTime.isAfter(limit)
+            "dateTime",     String.valueOf(finalApptDateTime),
+            "inRange",      finalApptDateTime != null &&
+                            !finalApptDateTime.isBefore(now) &&
+                            !finalApptDateTime.isAfter(limit)
         );
     }).toList();
 }

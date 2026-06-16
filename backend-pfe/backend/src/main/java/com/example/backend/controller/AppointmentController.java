@@ -354,17 +354,26 @@ public class AppointmentController {
 @GetMapping("/upcoming-reminders")
 public List<Map<String, Object>> getUpcomingReminders() {
 
-    LocalDateTime limitDate = LocalDateTime.now().plusHours(24);
+    LocalDateTime now = LocalDateTime.now();
+    LocalDateTime limitDate = now.plusHours(24);
 
-    return appointmentRepository.findAppointmentsForReminder(limitDate)
-            .stream()
+    System.out.println("===== REMINDER CHECK =====");
+    System.out.println("NOW = " + now);
+    System.out.println("LIMIT DATE = " + limitDate);
+
+    var appointments = appointmentRepository.findAppointmentsForReminder(limitDate);
+
+    System.out.println("FOUND APPOINTMENTS = " + appointments.size());
+
+    return appointments.stream()
             .map(a -> Map.<String, Object>of(
                     "id", a.getId(),
                     "citizenName", a.getCitizen() != null ? a.getCitizen().getName() : "",
                     "citizenEmail", a.getCitizen() != null ? a.getCitizen().getEmail() : "",
                     "serviceName", a.getDepartment() != null ? a.getDepartment().getName() : "",
                     "appointmentDate", a.getDate(),
-                    "appointmentTime", a.getTime()
+                    "appointmentTime", a.getTime(),
+                    "appointmentReminderSent", a.getReminderSent()
             ))
             .toList();
 }

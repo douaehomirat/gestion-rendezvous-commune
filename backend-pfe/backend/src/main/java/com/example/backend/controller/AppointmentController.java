@@ -373,7 +373,7 @@ public List<Map<String, Object>> getUpcomingReminders() {
                     "serviceName", a.getDepartment() != null ? a.getDepartment().getName() : "",
                     "appointmentDate", a.getDate(),
                     "appointmentTime", a.getTime(),
-                    "appointmentReminderSent", a.getReminderSent()
+                    "appointmentReminderSent", a.isReminderSent()
             ))
             .toList();
 }

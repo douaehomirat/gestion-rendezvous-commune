@@ -29,8 +29,8 @@ public class Appointment {
     private String notes;
     private String counter;
     private String status;
-    @Column(name="reminder_sent", nullable = false)
-    private Boolean reminderSent = false;
+    @Column(name = "reminder_sent", nullable = false)
+    private boolean reminderSent = false;
 
     // 👤 CITIZEN
     @ManyToOne(fetch = FetchType.EAGER)

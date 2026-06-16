@@ -86,12 +86,12 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     List<Appointment> findAllByAgentId(@Param("agentId") Long agentId);
 
 
-@Query("""
-SELECT a FROM Appointment a
-WHERE a.reminderSent = false
-And  a.status <> 'completed'
-AND FUNCTION('TIMESTAMP', a.date, a.time) BETWEEN :now AND :limitDate
-""")
+@Query(value = """
+    SELECT * FROM appointments
+    WHERE reminder_sent = false
+    AND status <> 'completed'
+    AND TIMESTAMP(date, time) BETWEEN :now AND :limitDate
+    """, nativeQuery = true)
 List<Appointment> findAppointmentsForReminder(
         @Param("now") LocalDateTime now,
         @Param("limitDate") LocalDateTime limitDate

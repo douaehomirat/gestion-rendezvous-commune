@@ -31,7 +31,7 @@ public class ReminderScheduler {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime limit = now.plusHours(24);
 
-        List<Appointment> list = repository.findAppointmentsForReminder(limit);
+    List<Appointment> list = repository.findAppointmentsForReminder(now, limit);
 
         for (Appointment a : list) {
 

@@ -28,6 +28,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 
@@ -388,23 +389,15 @@ public List<Map<String, Object>> debugAppointments() {
 @GetMapping("/upcoming-reminders")
 public List<Map<String, Object>> getUpcomingReminders() {
 
-    ZoneId zone = ZoneId.of("Africa/Casablanca");
-
-    LocalDateTime now = LocalDateTime.now(zone);
+    // Railway est en UTC, donc on utilise UTC pour la query
+    LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
     LocalDateTime limitDate = now.plusHours(24);
 
-    System.out.println("===== REMINDER CHECK =====");
-    System.out.println("NOW = " + now);
-    System.out.println("LIMIT DATE = " + limitDate);
+    System.out.println("NOW (UTC) = " + now);
+    System.out.println("LIMIT (UTC) = " + limitDate);
 
     List<Appointment> appointments =
             appointmentRepository.findAppointmentsForReminder(now, limitDate);
-
-    System.out.println("FOUND APPOINTMENTS = " + appointments.size());
-
-    appointments.forEach(a ->
-            System.out.println("APPOINTMENT = " + a.getDate() + " " + a.getTime())
-    );
 
     return appointments.stream()
             .map(a -> Map.<String, Object>of(

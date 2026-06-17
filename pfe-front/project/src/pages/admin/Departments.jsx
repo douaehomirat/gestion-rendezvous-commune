@@ -308,13 +308,15 @@ const Departments = () => {
 
                 {d.documentUrl ? (
                   <a
-                    href={d.documentUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-xs text-blue-600 hover:underline"
-                  >
-                    📄 Voir le document
-                  </a>
+                   // Departments.jsx
+
+  href={`https://docs.google.com/viewer?url=${encodeURIComponent(d.documentUrl)}&embedded=true`}
+  target="_blank"
+  rel="noreferrer"
+  className="text-xs text-blue-600 hover:underline"
+>
+  📄 Voir le document
+</a>
                 ) : (
                   <p className="text-xs text-gray-400">
                     Aucun document

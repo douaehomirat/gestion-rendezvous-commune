@@ -311,14 +311,13 @@ const MyAppointments = () => {
 
             {selected?.departmentDocs ? (
               <a
-                href={selected.departmentDocs}
-                target="_blank"
-                rel="noreferrer"
-                className="mt-3 flex items-center justify-center gap-2 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
-              >
-                <FileText size={16} />
-                Ouvrir les documents PDF
-              </a>
+                href={`https://docs.google.com/viewer?url=${encodeURIComponent(selected.departmentDocs)}&embedded=true`}
+  target="_blank"
+  rel="noreferrer"
+  className="..."
+>
+  Ouvrir les documents PDF
+</a>
             ) : (
               <p className="text-xs text-gray-400 mt-2">
                 Aucun document disponible

@@ -95,12 +95,13 @@ public class DepartmentService {
         if (file != null && !file.isEmpty()) {
             try {
                 Map uploadResult = cloudinary.uploader().upload(
-                    file.getBytes(),
-                    ObjectUtils.asMap(
-                        "folder", "departments",
-                        "resource_type", "raw"
-                    )
-                );
+    file.getBytes(),
+    ObjectUtils.asMap(
+        "folder", "departments",
+        "resource_type", "auto",
+        "format", "pdf"
+    )
+);
                 dep.setDocumentUrl((String) uploadResult.get("secure_url"));
             } catch (Exception e) {
                 throw new RuntimeException("Upload Cloudinary failed: " + e.getMessage());

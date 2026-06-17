@@ -92,9 +92,9 @@ const MyAppointments = () => {
           citizenName: a.citizenName || user?.name || 'Citoyen',
 
           // ✅ FIX PDF
-          departmentDocs: dep?.documentUrl
-            ?`https://gestion-rendezvous-commune-production-b126.up.railway.app/${dep.documentUrl}`
-            : null
+         departmentDocs: dep?.documentUrl
+  ? `https://gestion-rendezvous-commune-production-b126.up.railway.app/api/files/${dep.documentUrl.split('/').pop()}`
+  : null
         };
       });
 

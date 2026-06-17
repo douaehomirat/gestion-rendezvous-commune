@@ -22,7 +22,7 @@ export const connectNotificationSocket = (userId, role, onNotification) => {
   try {
     // Créer SockJS + STOMP client
     console.log('📡 Création SockJS...');
-    const socket = new SockJS('https://gestion-rendezvous-commune-production.up.railway.app/ws');
+    const socket = new SockJS('https://gestion-rendezvous-commune-production-b126.up.railway.app/ws');
     
     stompClient = new Client({
       webSocketFactory: () => {

@@ -1,5 +1,7 @@
 package com.example.backend.service;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.example.backend.entity.Department;
 import com.example.backend.entity.User;
 import com.example.backend.repository.DepartmentRepository;
@@ -9,9 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.text.Normalizer;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -20,13 +22,13 @@ public class DepartmentService {
 
     private final DepartmentRepository repository;
     private final UserRepository userRepository;
+    private final Cloudinary cloudinary;
 
     // ================= GET ALL =================
     public List<Department> getAll() {
         return repository.findAll();
     }
 
-    // ================= CREATE =================
     // ================= CREATE =================
     public Department create(Department d, MultipartFile file) {
         boolean exists = repository.existsByNameIgnoreCase(d.getName());
@@ -42,26 +44,23 @@ public class DepartmentService {
         }
 
         if (file != null && !file.isEmpty()) {
-
-            String uploadDir = System.getProperty("user.dir") + "/uploads/departments/";
-
-            File dir = new File(uploadDir);
-            if (!dir.exists()) dir.mkdirs();
-
-            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-            String path = uploadDir + fileName;
-
             try {
-                file.transferTo(new File(path));
+                Map uploadResult = cloudinary.uploader().upload(
+                    file.getBytes(),
+                    ObjectUtils.asMap(
+                        "folder", "departments",
+                        "resource_type", "raw"
+                    )
+                );
+                d.setDocumentUrl((String) uploadResult.get("secure_url"));
             } catch (Exception e) {
-                throw new RuntimeException("Upload failed: " + e.getMessage());
+                throw new RuntimeException("Upload Cloudinary failed: " + e.getMessage());
             }
-
-            d.setDocumentUrl("departments/" + fileName);
         }
 
         return repository.save(d);
     }
+
     // ================= UPDATE =================
     public Department update(
             Long id,
@@ -72,22 +71,19 @@ public class DepartmentService {
             Long headAgentId,
             MultipartFile file
     ) {
-
         Department dep = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Department not found"));
-
 
         dep.setName(name);
         dep.setDescription(description);
         dep.setPhone(phone);
         dep.setActive(active);
-        boolean exists = repository.existsByNameIgnoreCase(dep.getName());
 
+        boolean exists = repository.existsByNameIgnoreCase(dep.getName());
         if (exists && !repository.findById(dep.getId()).get().getName().equalsIgnoreCase(dep.getName())) {
             throw new RuntimeException("Ce service existe déjà !");
         }
 
-        // ===== HEAD AGENT =====
         if (headAgentId != null) {
             User agent = userRepository.findById(headAgentId)
                     .orElseThrow(() -> new RuntimeException("Agent introuvable"));
@@ -96,30 +92,18 @@ public class DepartmentService {
             dep.setHeadAgent(null);
         }
 
-        // ===== FILE UPLOAD FIXED =====
         if (file != null && !file.isEmpty()) {
-
             try {
-                // 🔥 CHEMIN ABSOLU (IMPORTANT FIX)
-                String uploadDir = System.getProperty("user.dir")
-                        + "/uploads/departments/";
-
-                File dir = new File(uploadDir);
-                if (!dir.exists()) {
-                    dir.mkdirs();
-                }
-
-                String fileName = System.currentTimeMillis()
-                        + "_" + file.getOriginalFilename();
-
-                File destination = new File(uploadDir + fileName);
-                file.transferTo(destination);
-
-                // 🔥 URL RELATIVE (FRONTEND FRIENDLY)
-                dep.setDocumentUrl("departments/" + fileName);
-
+                Map uploadResult = cloudinary.uploader().upload(
+                    file.getBytes(),
+                    ObjectUtils.asMap(
+                        "folder", "departments",
+                        "resource_type", "raw"
+                    )
+                );
+                dep.setDocumentUrl((String) uploadResult.get("secure_url"));
             } catch (Exception e) {
-                throw new RuntimeException("Upload failed: " + e.getMessage());
+                throw new RuntimeException("Upload Cloudinary failed: " + e.getMessage());
             }
         }
 
@@ -133,24 +117,19 @@ public class DepartmentService {
 
     // ================= TOGGLE =================
     public Department toggle(Long id) {
-
         Department dep = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Department not found"));
-
         dep.setActive(!dep.isActive());
         return repository.save(dep);
     }
 
-    // DepartmentService.java
+    // ================= SEARCH =================
     public Optional<Department> findByNameContainingIgnoreCase(String userInput) {
-
-        // Normaliser l'input utilisateur
         String normalized = Normalizer.normalize(userInput, Normalizer.Form.NFD)
                 .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
                 .toLowerCase()
                 .trim();
 
-        // Chercher tous les depts, puis filtrer côté Java
         return repository.findAll()
                 .stream()
                 .filter(dept -> {
@@ -161,22 +140,19 @@ public class DepartmentService {
                 })
                 .findFirst();
     }
+
+    // ================= TOGGLE DEPARTMENT =================
     @Transactional
     public void toggleDepartment(Long id) {
-
         Department dep = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Department not found"));
 
-        // ================= TOGGLE =================
         boolean newStatus = !dep.isActive();
         dep.setActive(newStatus);
 
         String agentStatus = newStatus ? "active" : "inactive";
-
-        // ================= UPDATE USERS DIRECT SQL =================
         userRepository.updateStatusByDepartementId(id, agentStatus);
 
-        // ================= SAVE DEPARTMENT =================
         repository.save(dep);
     }
 }

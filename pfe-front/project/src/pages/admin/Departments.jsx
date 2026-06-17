@@ -308,7 +308,7 @@ const Departments = () => {
 
                 {d.documentUrl ? (
                   <a
-                    href={`${FILE_BASE_URL}uploads/${d.documentUrl}`}
+                    href={d.documentUrl}
                     target="_blank"
                     rel="noreferrer"
                     className="text-xs text-blue-600 hover:underline"

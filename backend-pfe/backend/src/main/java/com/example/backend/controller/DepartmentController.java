@@ -16,7 +16,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/departments")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins ="https://incredible-tapioca-00c427.netlify.app")
 @RequiredArgsConstructor
 public class DepartmentController {
 

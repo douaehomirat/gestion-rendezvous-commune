@@ -93,7 +93,7 @@ const MyAppointments = () => {
 
           // ✅ FIX PDF
           departmentDocs: dep?.documentUrl
-            ? `http://gestion-rendezvous-commune-production-b126.up.railway.app/${dep.documentUrl}`
+            ?`https://gestion-rendezvous-commune-production-b126.up.railway.app/${dep.documentUrl}`
             : null
         };
       });

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://gestion-rendezvous-commune-production.up.railway.app/api/appointments";
+const API_URL = "https://gestion-rendezvous-commune-production-b126.up.railway.app/api/appointments";
 
 /* ================= CRUD ================= */
 

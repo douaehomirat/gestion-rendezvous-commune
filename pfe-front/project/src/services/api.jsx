@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: 'https://gestion-rendezvous-commune-production.up.railway.app/api',
+  baseURL: 'https://gestion-rendezvous-commune-production-b126.up.railway.app/api/appointments',
   headers: { 'Content-Type': 'application/json' },
 });
 

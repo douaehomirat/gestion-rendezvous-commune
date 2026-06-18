@@ -30,7 +30,7 @@ public class SecurityConfig {
                         .requestMatchers("/ws/**").permitAll()
                         .requestMatchers("/topic/**").permitAll()
                         .requestMatchers("/app/**").permitAll()
-                        .requestMatchers("/api/files/**").permitAll()ç
+                        .requestMatchers("/api/files/**").permitAll()
                         .requestMatchers("/api/auth/reset-password/**").permitAll()
                         .anyRequest().permitAll()
                 );

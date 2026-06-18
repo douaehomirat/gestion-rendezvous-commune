@@ -59,8 +59,7 @@ public class EmailService {
         Map<String, Object> payload = Map.of(
                 "sender", Map.of(
                         "name", "CityAppointment",
-                        "email", "ae9b17001@smtp-brevo.com" 
-                ),
+                        "email", "douaehomirat@gmail.com"                ),
                 "to", List.of(
                         Map.of("email", to)
                 ),

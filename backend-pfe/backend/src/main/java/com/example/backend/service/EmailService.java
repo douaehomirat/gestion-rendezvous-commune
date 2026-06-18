@@ -1,11 +1,17 @@
 package com.example.backend.service;
 
-import com.example.backend.entity.Appointment;
-import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -16,32 +22,63 @@ public class EmailService {
     @Value("${app.frontend.url}")
     private String frontendUrl;
 
+    @Value("${brevo.api.key}")
+    private String brevoApiKey;
+
+    /**
+     * Envoi du lien de réinitialisation via SMTP
+     */
     public void sendResetLink(String toEmail, String token) {
+
         String resetUrl = frontendUrl + "/reset-password?token=" + token;
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(toEmail);
         message.setSubject("Réinitialisation de votre mot de passe");
         message.setText(
-            "Bonjour,\n\n" +
-            "Cliquez sur ce lien pour réinitialiser votre mot de passe :\n\n" +
-            resetUrl + "\n\n" +
-            "Ce lien expire dans 30 minutes.\n\n" +
-            "Si vous n'avez pas demandé cette réinitialisation, ignorez cet email."
+                "Bonjour,\n\n" +
+                "Cliquez sur le lien suivant pour réinitialiser votre mot de passe :\n\n" +
+                resetUrl +
+                "\n\nCe lien expire dans 30 minutes."
         );
 
         mailSender.send(message);
     }
-    public void sendEmail(String to, String subject, String body) {
-    SimpleMailMessage message = new SimpleMailMessage();
-    message.setTo(to);
-    message.setSubject(subject);
-    message.setText(body);
 
-    try {
-        mailSender.send(message);
-    } catch (Exception e) {
-        throw new RuntimeException("Erreur envoi email: " + e.getMessage());
+    /**
+     * Envoi d'un email avec l'API Brevo
+     */
+    public void sendEmail(String to, String subject, String body) {
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("api-key", brevoApiKey);
+
+        Map<String, Object> payload = Map.of(
+                "sender", Map.of(
+                        "name", "CityAppointment",
+                        "email", "ton-email-verifie@ton-domaine.com"
+                ),
+                "to", List.of(
+                        Map.of("email", to)
+                ),
+                "subject", subject,
+                "textContent", body
+        );
+
+        HttpEntity<Map<String, Object>> request =
+                new HttpEntity<>(payload, headers);
+
+        try {
+            restTemplate.postForObject(
+                    "https://api.brevo.com/v3/smtp/email",
+                    request,
+                    String.class
+            );
+        } catch (Exception e) {
+            throw new RuntimeException("Erreur lors de l'envoi de l'email : " + e.getMessage(), e);
+        }
     }
-}
 }

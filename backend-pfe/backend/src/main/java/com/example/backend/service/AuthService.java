@@ -25,6 +25,8 @@ public class AuthService {
     @Autowired private UserRepository userRepository;
     @Autowired private PasswordResetTokenRepository tokenRepository;
     @Autowired private PasswordEncoder passwordEncoder;
+    @Autowired
+private EmailService emailService;
 
     @Value("${resend.api.key}")
     private String resendApiKey;
@@ -61,37 +63,24 @@ public class AuthService {
     }
 
     private void sendResetPasswordEmail(User user, String token) {
-        String resetUrl = "https://incredible-tapioca-00c427.netlify.app/reset-password/" + token;
+    String resetUrl = "https://incredible-tapioca-00c427.netlify.app/reset-password?token=" + token;
 
-        String body = """
+    String body = """
             Bonjour %s,
-            
+
             Vous avez demandé une réinitialisation de mot de passe.
             Cliquez sur le lien ci-dessous :
-            
+
             %s
-            
-            ⚠️ Ce lien expire dans 24 heures.
-            
+
+            ⚠️ Ce lien expire dans 30 minutes.
+
             Si vous n'êtes pas à l'origine de cette demande, ignorez cet email.
-            
+
             Cordialement,
             CityAppointment Team
             """.formatted(user.getName(), resetUrl);
 
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(resendApiKey);
-
-        Map<String, Object> payload = Map.of(
-            "from", "onboarding@resend.dev",
-            "to", new String[]{"douaehomirat@gmail.com"},
-            "subject", "🔒 Réinitialisation de votre mot de passe",
-            "text", body
-        );
-
-        HttpEntity<Map<String, Object>> request = new HttpEntity<>(payload, headers);
-        restTemplate.postForObject("https://api.resend.com/emails", request, String.class);
-    }
+    emailService.sendEmail(user.getEmail(), "Réinitialisation de votre mot de passe", body);
+}
 }

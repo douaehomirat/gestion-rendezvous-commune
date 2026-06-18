@@ -40,7 +40,7 @@ public class AuthService {
         tokenRepository.save(resetToken);
         tokenRepository.flush();
 
-        String resetUrl = "https://incredible-tapioca-00c427.netlify.app/reset-password?token=" + token;
+        String resetUrl = "https://incredible-tapioca-00c427.netlify.app/reset-password/" + token;
         String body = """
                 Bonjour %s,
 

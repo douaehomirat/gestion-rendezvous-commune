@@ -6,52 +6,68 @@ import com.example.backend.exeption.InvalidTokenException;
 import com.example.backend.exeption.UserNotFoundException;
 import com.example.backend.repository.PasswordResetTokenRepository;
 import com.example.backend.repository.UserRepository;
-import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 import java.util.UUID;
 
 @Service
-@Transactional
+@RequiredArgsConstructor
 public class AuthService {
 
-    @Autowired private UserRepository userRepository;
-    @Autowired private PasswordResetTokenRepository tokenRepository;
-    @Autowired private PasswordEncoder passwordEncoder;
-    @Autowired
-private EmailService emailService;
+    private final UserRepository userRepository;
+    private final PasswordResetTokenRepository tokenRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
-    @Value("${resend.api.key}")
-    private String resendApiKey;
-
+    // ================= FORGOT PASSWORD =================
+    @Transactional
     public void forgotPassword(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("Aucun compte avec cet email"));
 
         tokenRepository.deleteByUser(user);
+        tokenRepository.flush();
 
         String token = UUID.randomUUID().toString();
         PasswordResetToken resetToken = new PasswordResetToken();
         resetToken.setToken(token);
         resetToken.setUser(user);
-        resetToken.setExpiryDate(LocalDateTime.now().plusHours(24));
+        resetToken.setExpiryDate(LocalDateTime.now().plusMinutes(30));
         tokenRepository.save(resetToken);
+        tokenRepository.flush();
 
-        sendResetPasswordEmail(user, token);
+        String resetUrl = "https://incredible-tapioca-00c427.netlify.app/reset-password?token=" + token;
+        String body = """
+                Bonjour %s,
+
+                Vous avez demandé une réinitialisation de mot de passe.
+                Cliquez sur le lien ci-dessous :
+
+                %s
+
+                ⚠️ Ce lien expire dans 30 minutes.
+
+                Si vous n'êtes pas à l'origine de cette demande, ignorez cet email.
+
+                Cordialement,
+                CityAppointment Team
+                """.formatted(user.getName(), resetUrl);
+
+        emailService.sendEmail(user.getEmail(), "Réinitialisation de votre mot de passe", body);
     }
 
+    // ================= RESET PASSWORD =================
+    @Transactional
     public void resetPassword(String token, String password) {
         PasswordResetToken resetToken = tokenRepository.findByToken(token)
-                .orElseThrow(() -> new InvalidTokenException("Invalid token"));
+                .orElseThrow(() -> new InvalidTokenException("Token invalide"));
 
         if (resetToken.isExpired()) {
+            tokenRepository.delete(resetToken);
             throw new InvalidTokenException("Token expiré");
         }
 
@@ -61,26 +77,4 @@ private EmailService emailService;
 
         tokenRepository.delete(resetToken);
     }
-
-    private void sendResetPasswordEmail(User user, String token) {
-    String resetUrl = "https://incredible-tapioca-00c427.netlify.app/reset-password?token=" + token;
-
-    String body = """
-            Bonjour %s,
-
-            Vous avez demandé une réinitialisation de mot de passe.
-            Cliquez sur le lien ci-dessous:
-
-            %s
-
-            ⚠️ Ce lien expire dans 30 minutes.
-
-            Si vous n'êtes pas à l'origine de cette demande, ignorez cet email.
-
-            Cordialement,
-            CityAppointment Team
-            """.formatted(user.getName(), resetUrl);
-
-    emailService.sendEmail(user.getEmail(), "Réinitialisation de votre mot de passe", body);
-}
 }

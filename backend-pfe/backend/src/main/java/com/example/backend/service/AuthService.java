@@ -7,52 +7,49 @@ import com.example.backend.exeption.UserNotFoundException;
 import com.example.backend.repository.PasswordResetTokenRepository;
 import com.example.backend.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
 @Transactional
-@RequiredArgsConstructor
 public class AuthService {
 
-    private final UserRepository userRepository;
-    private final PasswordResetTokenRepository tokenRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JavaMailSender mailSender;
+    @Autowired private UserRepository userRepository;
+    @Autowired private PasswordResetTokenRepository tokenRepository;
+    @Autowired private PasswordEncoder passwordEncoder;
 
-    // ================= FORGOT PASSWORD =================
+    @Value("${resend.api.key}")
+    private String resendApiKey;
+
     public void forgotPassword(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("Aucun compte avec cet email"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        // Supprimer ancien token
         tokenRepository.deleteByUser(user);
 
-        // Créer nouveau token
         String token = UUID.randomUUID().toString();
         PasswordResetToken resetToken = new PasswordResetToken();
         resetToken.setToken(token);
         resetToken.setUser(user);
-        resetToken.setExpiryDate(LocalDateTime.now().plusMinutes(30));
+        resetToken.setExpiryDate(LocalDateTime.now().plusHours(24));
         tokenRepository.save(resetToken);
 
-        // Envoyer email via Brevo
         sendResetPasswordEmail(user, token);
     }
 
-    // ================= RESET PASSWORD =================
     public void resetPassword(String token, String password) {
         PasswordResetToken resetToken = tokenRepository.findByToken(token)
-                .orElseThrow(() -> new InvalidTokenException("Token invalide"));
+                .orElseThrow(() -> new InvalidTokenException("Invalid token"));
 
         if (resetToken.isExpired()) {
-            tokenRepository.delete(resetToken);
             throw new InvalidTokenException("Token expiré");
         }
 
@@ -63,35 +60,38 @@ public class AuthService {
         tokenRepository.delete(resetToken);
     }
 
-    // ================= SEND EMAIL VIA BREVO =================
     private void sendResetPasswordEmail(User user, String token) {
-        String resetUrl = "https://incredible-tapioca-00c427.netlify.app/reset-password?token=" + token;
+        String resetUrl = "https://incredible-tapioca-00c427.netlify.app/reset-password/" + token;
 
         String body = """
-                Bonjour %s,
+            Bonjour %s,
+            
+            Vous avez demandé une réinitialisation de mot de passe.
+            Cliquez sur le lien ci-dessous :
+            
+            %s
+            
+            ⚠️ Ce lien expire dans 24 heures.
+            
+            Si vous n'êtes pas à l'origine de cette demande, ignorez cet email.
+            
+            Cordialement,
+            CityAppointment Team
+            """.formatted(user.getName(), resetUrl);
 
-                Vous avez demandé une réinitialisation de mot de passe.
-                Cliquez sur le lien ci-dessous :
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(resendApiKey);
 
-                %s
+        Map<String, Object> payload = Map.of(
+            "from", "onboarding@resend.dev",
+            "to", new String[]{"douaehomirat@gmail.com"},
+            "subject", "🔒 Réinitialisation de votre mot de passe",
+            "text", body
+        );
 
-                ⚠️ Ce lien expire dans 30 minutes.
-
-                Si vous n'êtes pas à l'origine de cette demande, ignorez cet email.
-
-                Cordialement,
-                CityAppointment Team
-                """.formatted(user.getName(), resetUrl);
-
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(user.getEmail());
-        message.setSubject("Réinitialisation de votre mot de passe");
-        message.setText(body);
-
-        try {
-            mailSender.send(message);
-        } catch (Exception e) {
-            throw new RuntimeException("Erreur envoi email Brevo: " + e.getMessage());
-        }
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(payload, headers);
+        restTemplate.postForObject("https://api.resend.com/emails", request, String.class);
     }
 }

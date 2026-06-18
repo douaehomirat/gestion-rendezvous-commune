@@ -96,32 +96,30 @@ private AuthService authService;
     }
 
     // ✅ RESET PASSWORD
-    @PostMapping("/reset-password/{token}")
-    public ResponseEntity<ApiResponse> resetPassword(
-            @PathVariable String token,
-            @Valid @RequestBody ResetPasswordRequest request  // ✅ @Valid
-    ) {
-        try {
-            // ✅ Validation passwords match
-            if (!request.isPasswordMatch()) {
-                return ResponseEntity.badRequest()
-                        .body(new ApiResponse(false, "❌ Les mots de passe ne correspondent pas"));
-            }
-
-            // ✅ Logique métier
-            authService.resetPassword(token, request.getPassword());
-
-            return ResponseEntity.ok(
-                    new ApiResponse(true, "✅ Mot de passe réinitialisé avec succès!")
-            );
-
-        } catch (InvalidTokenException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ApiResponse(false, "❌ Token invalide ou expiré"));
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse(false, "❌ Erreur serveur"));
+ @PostMapping("/reset-password/{token}")
+public ResponseEntity<ApiResponse> resetPassword(
+        @PathVariable String token,
+        @Valid @RequestBody ResetPasswordRequest request
+) {
+    try {
+        if (!request.isPasswordMatch()) {
+            return ResponseEntity.badRequest()
+                    .body(new ApiResponse(false, "❌ Les mots de passe ne correspondent pas"));
         }
+
+        authService.resetPassword(token, request.getPassword());
+
+        return ResponseEntity.ok(
+                new ApiResponse(true, "✅ Mot de passe réinitialisé avec succès!")
+        );
+
+    } catch (InvalidTokenException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiResponse(false, "❌ Token invalide ou expiré"));
+
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ApiResponse(false, "❌ Erreur serveur"));
     }
+}
 }

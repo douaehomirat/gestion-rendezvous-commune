@@ -11,6 +11,8 @@ import com.example.backend.repository.AppointmentRepository;
 import com.example.backend.repository.NotificationRepository;
 import com.example.backend.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +27,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 @Service
 public class AppointmentService {
+
+    private static final Logger log = LoggerFactory.getLogger(AppointmentService.class);
 
     private final AppointmentRepository repo;
     private final UserRepository userRepo;
@@ -282,14 +286,17 @@ public class AppointmentService {
     }
 
     public void sendReminderEmail(String email, String name, String date, String time) {
-
-        emailService.sendEmail(
-                email,
-                "Rappel de rendez-vous",
-                "Bonjour " + name +
-                        ",\n\nVous avez un rendez-vous prévu pour " +
-                        date + " à " + time
-        );
+        try {
+            emailService.sendEmail(
+                    email,
+                    "Rappel de rendez-vous",
+                    "Bonjour " + name +
+                            ",\n\nVous avez un rendez-vous prévu pour " +
+                            date + " à " + time
+            );
+        } catch (Exception e) {
+            log.error("Failed to send reminder email to {}: {}", email, e.getMessage());
+        }
     }
 
 

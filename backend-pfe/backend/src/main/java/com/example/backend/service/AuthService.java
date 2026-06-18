@@ -7,6 +7,8 @@ import com.example.backend.exeption.UserNotFoundException;
 import com.example.backend.repository.PasswordResetTokenRepository;
 import com.example.backend.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -21,6 +23,8 @@ import java.util.UUID;
 @Service
 @Transactional
 public class AuthService {
+
+    private static final Logger log = LoggerFactory.getLogger(AuthService.class);
 
     @Autowired private UserRepository userRepository;
     @Autowired private PasswordResetTokenRepository tokenRepository;
@@ -44,7 +48,11 @@ private EmailService emailService;
         resetToken.setExpiryDate(LocalDateTime.now().plusHours(24));
         tokenRepository.save(resetToken);
 
-        sendResetPasswordEmail(user, token);
+        try {
+            sendResetPasswordEmail(user, token);
+        } catch (Exception e) {
+            log.error("Failed to send password reset email to {}: {}", user.getEmail(), e.getMessage());
+        }
     }
 
     public void resetPassword(String token, String password) {

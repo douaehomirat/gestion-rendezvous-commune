@@ -69,7 +69,7 @@ private EmailService emailService;
             Bonjour %s,
 
             Vous avez demandé une réinitialisation de mot de passe.
-            Cliquez sur le lien ci-dessous :
+            Cliquez sur le lien ci-dessous:
 
             %s
 
